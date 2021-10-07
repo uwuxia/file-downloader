@@ -9,5 +9,8 @@
   "type": "module",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "log-update": "^4.0.0"
+  }
 }
