@@ -18,7 +18,6 @@ const download = async (link, fileNameFromUser) => {
       ?.split(";")[1]
       ?.split("=")[1]
       ?.replace(/"/g, "");
-      console.log(header);
 
     response.body.on("data", (chunk) => {
       done += chunk.length;
