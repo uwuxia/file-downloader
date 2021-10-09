@@ -19,6 +19,8 @@ const download = async (link, fileNameFromUser) => {
       ?.split("=")[1]
       ?.replace(/"/g, "");
 
+    const path = fileNameFromServer || fileNameFromUser;
+
     response.body.on("data", (chunk) => {
       done += chunk.length;
       const remaining = total - done;
@@ -31,7 +33,7 @@ const download = async (link, fileNameFromUser) => {
       const timeRemaining = Math.round(eta / 60);
 
       logUpdate(`
-File name: ${fileNameFromServer || fileNameFromUser}
+File name: ${path}
 Percentage: ${Math.round((done / total) * 100)}%
 Size: ${Math.round((total / 1000 / 1000) * 100) / 100} MB
 Downloaded: ${Math.round((done / 1000 / 1000) * 100) / 100} MB
@@ -46,17 +48,13 @@ Time remaining: ${
     });
 
     const writableStream = fs.createWriteStream(
-      `${os.userInfo().homedir}/Downloads/${
-        fileNameFromServer || fileNameFromUser
-      }`
+      `${os.userInfo().homedir}/Downloads/${path}`
     );
     response.body.pipe(writableStream).on("finish", () => {
       const elapsed = (Date.now() - startedAt) / 1000;
 
       logUpdate(`File downloaded!
-Downloaded file path: ${os.userInfo().homedir}/Downloads/${
-        fileNameFromUser || fileNameFromServer
-      }
+Downloaded file path: ${os.userInfo().homedir}/Downloads/${path}
 Elapsed time: ${
         elapsed < 60
           ? `${Math.round(elapsed)} second(s)`
