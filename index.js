@@ -1,18 +1,24 @@
+#! /usr/bin/env node
+
 import fetch from "node-fetch";
 import fs from "fs";
+import os from "os";
 import logUpdate from "log-update";
 
-const download = async (link) => {
+const download = async (link, fileNameFromUser) => {
   try {
     const response = await fetch(link);
-    const path = link.split("/")[link.split("/").length - 1];
 
     const startedAt = Date.now();
     const total = parseInt(response.headers.get("content-length"));
     let done = 0;
 
     const header = response.headers.get("content-disposition");
-    const filename = header?.split(";")[1]?.split("=")[1]?.replace(/"/g, "");
+    const fileNameFromServer = header
+      ?.split(";")[1]
+      ?.split("=")[1]
+      ?.replace(/"/g, "");
+      console.log(header);
 
     response.body.on("data", (chunk) => {
       done += chunk.length;
@@ -26,7 +32,7 @@ const download = async (link) => {
       const timeRemaining = Math.round(eta / 60);
 
       logUpdate(`
-File name: ${filename || path}
+File name: ${fileNameFromServer || fileNameFromUser}
 Percentage: ${Math.round((done / total) * 100)}%
 Size: ${Math.round((total / 1000 / 1000) * 100) / 100} MB
 Downloaded: ${Math.round((done / 1000 / 1000) * 100) / 100} MB
@@ -40,11 +46,29 @@ Time remaining: ${
       }`);
     });
 
-    const writableStream = fs.createWriteStream(filename || path);
-    response.body.pipe(writableStream);
+    const writableStream = fs.createWriteStream(
+      `${os.userInfo().homedir}/Desktop/${
+        fileNameFromUser || fileNameFromServer
+      }`
+    );
+    response.body.pipe(writableStream).on("finish", () => {
+      const elapsed = (Date.now() - startedAt) / 1000;
+
+      logUpdate(`File downloaded!
+Downloaded file path: ${os.userInfo().homedir}/Desktop/${
+        fileNameFromUser || fileNameFromServer
+      }
+Elapsed time: ${
+        elapsed < 60
+          ? `${Math.round(elapsed)} second(s)`
+          : elapsed >= 60
+          ? `${Math.round(elapsed / 60 / 60)} hour(s)`
+          : `${Math.round(elapsed / 60)} minute(s)`
+      }`);
+    });
   } catch (err) {
     logUpdate(`Error: ${err}`);
   }
 };
 
-download(process.argv[2]);
+download(process.argv[2], process.argv[3]);

@@ -3,14 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "node-downloader": "index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
-  "keywords": [],
+  "keywords": [
+    "cli"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "log-update": "^4.0.0"
+    "log-update": "^4.0.0",
+    "node-fetch": "^3.0.0"
   }
 }
