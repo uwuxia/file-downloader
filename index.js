@@ -47,7 +47,7 @@ Time remaining: ${
 
     const writableStream = fs.createWriteStream(
       `${os.userInfo().homedir}/Downloads/${
-        fileNameFromUser || fileNameFromServer
+        fileNameFromServer || fileNameFromUser
       }`
     );
     response.body.pipe(writableStream).on("finish", () => {
