@@ -54,7 +54,7 @@ Time remaining: ${
       const elapsed = (Date.now() - startedAt) / 1000;
 
       logUpdate(`File downloaded!
-Downloaded file path: ${os.userInfo().homedir}/Desktop/${
+Downloaded file path: ${os.userInfo().homedir}/Downloads/${
         fileNameFromUser || fileNameFromServer
       }
 Elapsed time: ${
