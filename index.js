@@ -1,13 +1,19 @@
 #! /usr/bin/env node
 
+import https from 'https';
 import fetch from "node-fetch";
+import logUpdate from "log-update";
+
 import fs from "fs";
 import os from "os";
-import logUpdate from "log-update";
 
 const download = async (link, fileNameFromUser) => {
   try {
-    const response = await fetch(link);
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+
+    const response = await fetch(link, { agent });
 
     const startedAt = Date.now();
     const total = parseInt(response.headers.get("content-length"));
